@@ -1,0 +1,60 @@
+<!-- WordPress-ready. Paste into a "Custom HTML" block. Upload architecture.png and
+     answer.png from this folder to your Media Library (filenames match). Edit the byline.
+     Theme: "secure / private" — light, deep navy, sans-serif. -->
+<div class="ace-private-rag" style="max-width:840px;margin:0 auto;line-height:1.7;font-size:17px;color:#1f2933;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <div style="background:#1e4e79;border-radius:10px;padding:22px 26px;margin-bottom:24px;color:#eaf2fb;">
+    <div style="font-size:13px;letter-spacing:1px;color:#9fc3e8;">🔒 PRIVATE RAG · ORACLE 26ai</div>
+    <h1 style="font-size:1.85em;line-height:1.3;margin:10px 0 6px;color:#fff;">Your Documents Never Leave the Database</h1>
+    <p style="margin:0;color:#cfe0f1;">Retrieval-augmented Q&amp;A where the embeddings happen <em>inside</em> Oracle 26ai — no text shipped to an external API.</p>
+  </div>
+
+  <p>Every RAG tutorial starts the same way: take your documents, send them to an embedding API, get vectors back. For a hobby project that's fine. For <strong>private or regulated data</strong>, shipping every document (and every user question) to a third-party endpoint is exactly the thing your security team won't sign off on.</p>
+  <p>Oracle&nbsp;26ai offers a different path: load an embedding model <em>into the database</em> and generate the vectors <strong>where the data already lives</strong>. The text never leaves Oracle to be embedded.</p>
+
+  <h2 style="color:#1e4e79;margin-top:32px;">The whole pipeline, inside the database</h2>
+  <figure style="margin:20px 0;text-align:center;">
+    <img src="architecture.png" alt="Diagram: documents and the question are both embedded by an in-database ONNX model via VECTOR_EMBEDDING; VECTOR_DISTANCE finds top-k matches; an LLM composes the answer from the in-database context" style="max-width:100%;height:auto;border-radius:10px;border:1px solid #e5e7eb;" />
+    <figcaption style="font-size:14px;color:#6b7280;font-style:italic;margin-top:8px;">The same in-DB model embeds the documents and the query; retrieval is plain SQL.</figcaption>
+  </figure>
+
+  <h2 style="color:#1e4e79;margin-top:32px;">How it works</h2>
+  <p><strong>1. Load an embedding model into Oracle (once).</strong> Oracle ships a prebuilt ONNX model you import with <code style="background:#eef2f6;padding:1px 6px;border-radius:4px;">DBMS_VECTOR.LOAD_ONNX_MODEL</code>.</p>
+  <p><strong>2. Embed the documents in place</strong> — no data leaves the DB:</p>
+  <pre style="background:#0f2438;color:#dce9f5;padding:15px;border-radius:10px;overflow:auto;font-size:13.5px;"><code>UPDATE documents
+   SET embedding = VECTOR_EMBEDDING(DOC_MODEL USING content AS data);</code></pre>
+  <p><strong>3. Embed the question in the DB too, and retrieve</strong> — the user's text is embedded inside Oracle as part of the same query:</p>
+  <pre style="background:#0f2438;color:#dce9f5;padding:15px;border-radius:10px;overflow:auto;font-size:13.5px;"><code>SELECT title,
+       VECTOR_DISTANCE(embedding,
+          VECTOR_EMBEDDING(DOC_MODEL USING :q AS data), COSINE) AS distance,
+       content
+FROM   documents
+ORDER  BY distance
+FETCH  APPROX FIRST 3 ROWS ONLY;</code></pre>
+
+  <h2 style="color:#1e4e79;margin-top:32px;">The result</h2>
+  <p>Ask a question, get an answer grounded in the retrieved clauses — with the matched documents and their distances right there:</p>
+  <figure style="margin:20px 0;text-align:center;">
+    <img src="answer.png" alt="Private RAG answering 'How can I let an AI assistant query my Oracle database safely?' — it cites the SQLcl MCP Server and SQL Firewall documents, with their vector distances" style="max-width:100%;height:auto;border-radius:10px;border:1px solid #e5e7eb;" />
+    <figcaption style="font-size:14px;color:#6b7280;font-style:italic;margin-top:8px;">A grounded answer plus the retrieved documents and distances. (Badge shows the embedding mode — flip to in-DB by loading the model.)</figcaption>
+  </figure>
+
+  <h2 style="color:#1e4e79;margin-top:32px;">A practical note (and an honest one)</h2>
+  <p>The demo <strong>auto-detects</strong> the in-DB model: if it's loaded, documents and queries are embedded inside Oracle; if not, it falls back to a client-side embedding API so you can try it immediately. Loading the ONNX model is a one-time admin step (it needs a credential to fetch the model), after which everything runs zero-external for embeddings and retrieval.</p>
+  <p>One scoping point: <em>embeddings and retrieval</em> are fully in-database. The final answer wording is still produced by an LLM from the retrieved context — swap in an in-database generation path (e.g. Select AI) if you want generation to stay in Oracle too.</p>
+
+  <h2 style="color:#1e4e79;margin-top:32px;">Why it matters</h2>
+  <ul>
+    <li><strong>Data residency.</strong> Sensitive documents are embedded where they live — nothing is shipped out to be vectorized.</li>
+    <li><strong>Fewer moving parts.</strong> No separate embedding service to secure, scale, rate-limit, or pay per call.</li>
+    <li><strong>It's just SQL.</strong> <code style="background:#eef2f6;padding:1px 6px;border-radius:4px;">VECTOR_EMBEDDING</code> and <code style="background:#eef2f6;padding:1px 6px;border-radius:4px;">VECTOR_DISTANCE</code> in one statement — embed, search, done.</li>
+  </ul>
+  <p>The agent reaches the database through the <strong>SQLcl MCP Server</strong>, so even orchestration uses a saved connection and an audited path.</p>
+
+  <div style="background:#eef2f6;border-radius:10px;padding:16px 20px;margin-top:30px;font-size:16px;">
+    <strong style="color:#1e4e79;">About the author</strong><br>
+    <strong>Prashant Khadayate</strong> is an <strong>Oracle ACE</strong> focused on the Oracle AI Database (26ai), AI Vector Search, and the SQLcl MCP Server. Connect on <a href="https://www.linkedin.com/in/prashant-khadayate-1a8b0b97/" style="color:#1e4e79;">LinkedIn</a> for more hands-on Oracle AI experiments.
+  </div>
+  <p style="font-size:13px;color:#9ca3af;margin-top:14px;">A learning demo.</p>
+
+</div>

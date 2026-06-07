@@ -1,0 +1,8 @@
+# Theme: "secure / private" — light with deep-navy accent (distinct from the other demos).
+[theme]
+base = "light"
+primaryColor = "#1e4e79"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#eef2f6"
+textColor = "#1f2933"
+font = "sans serif"
