@@ -57,6 +57,8 @@ One scoping point: *embeddings and retrieval* are fully in-database. The final a
 
 The agent reaches the database through the **SQLcl MCP Server**, so even orchestration uses a saved connection and an audited path.
 
+📦 **Full code on GitHub:** [github.com/khadayatepa/in-db-embeddings-rag](https://github.com/khadayatepa/in-db-embeddings-rag)
+
 ---
 
 *About the author: **Prashant Khadayate** is an **Oracle ACE** focused on the Oracle AI Database (26ai), AI Vector Search, and the SQLcl MCP Server. Connect on [LinkedIn](https://www.linkedin.com/in/prashant-khadayate-1a8b0b97/) for more hands-on Oracle AI experiments.*
