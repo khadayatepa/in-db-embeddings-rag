@@ -12,7 +12,15 @@
   <p>Every RAG tutorial starts the same way: take your documents, send them to an embedding API, get vectors back. For a hobby project that's fine. For <strong>private or regulated data</strong>, shipping every document (and every user question) to a third-party endpoint is exactly the thing your security team won't sign off on.</p>
   <p>Oracle&nbsp;26ai offers a different path: load an embedding model <em>into the database</em> and generate the vectors <strong>where the data already lives</strong>. The text never leaves Oracle to be embedded.</p>
 
-  <h2 style="color:#1e4e79;margin-top:32px;">The whole pipeline, inside the database</h2>
+    <div style="background:#f6f8fa;border:1px solid #e6eaef;border-left:4px solid #1e3a8a;border-radius:10px;padding:14px 18px;margin:20px 0;font-size:15px;color:#243240;">
+    <div style="font-weight:800;margin-bottom:8px;color:#0f172a;">📋 At a glance</div>
+    <div style="margin:3px 0;"><strong>Tech stack:</strong> Oracle 26ai DBMS_VECTOR (in-database ONNX embeddings) · VECTOR_EMBEDDING · SQLcl MCP</div>
+    <div style="margin:3px 0;"><strong>Database:</strong> Oracle AI Database 26ai — 23.26.2.2.0 (Autonomous Database)</div>
+    <div style="margin:3px 0;"><strong>Best for:</strong> Private RAG where embeddings are generated inside the database — no external embedding API.</div>
+    <div style="margin:3px 0;"><strong>Level:</strong> Intermediate</div>
+  </div>
+
+<h2 style="color:#1e4e79;margin-top:32px;">The whole pipeline, inside the database</h2>
   <figure style="margin:20px 0;text-align:center;">
     <img src="architecture.png" alt="Diagram: documents and the question are both embedded by an in-database ONNX model via VECTOR_EMBEDDING; VECTOR_DISTANCE finds top-k matches; an LLM composes the answer from the in-database context" style="max-width:100%;height:auto;border-radius:10px;border:1px solid #e5e7eb;" />
     <figcaption style="font-size:14px;color:#6b7280;font-style:italic;margin-top:8px;">The same in-DB model embeds the documents and the query; retrieval is plain SQL.</figcaption>

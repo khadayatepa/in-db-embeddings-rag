@@ -4,6 +4,14 @@
 
 ---
 
+**📋 At a glance**
+
+- **Tech stack:** Oracle 26ai DBMS_VECTOR (in-database ONNX embeddings) · VECTOR_EMBEDDING · SQLcl MCP
+- **Database:** Oracle AI Database 26ai — 23.26.2.2.0 (Autonomous Database)
+- **Best for:** Private RAG where embeddings are generated inside the database — no external embedding API.
+- **Level:** Intermediate
+
+
 Every RAG tutorial starts the same way: take your documents, send them to an embedding API, get vectors back. For a hobby project that's fine. For **private or regulated data**, shipping every document (and every user question) to a third-party endpoint is exactly the thing your security team won't sign off on.
 
 Oracle 26ai offers a different path: load an embedding model *into the database* and generate the vectors **where the data already lives**. The text never leaves Oracle to be embedded.
