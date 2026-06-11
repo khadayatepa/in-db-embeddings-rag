@@ -6,6 +6,7 @@
 
 **📋 At a glance**
 
+- **📦 Repository:** [github.com/khadayatepa/in-db-embeddings-rag](https://github.com/khadayatepa/in-db-embeddings-rag)
 - **Tech stack:** Oracle 26ai DBMS_VECTOR (in-database ONNX embeddings) · VECTOR_EMBEDDING · SQLcl MCP
 - **Database:** Oracle AI Database 26ai — 23.26.2.2.0 (Autonomous Database)
 - **Prerequisites:** SQLcl 25.2+ (MCP), Python 3.10+ (OpenAI fallback if no in-DB ONNX model loaded)
